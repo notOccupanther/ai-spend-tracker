@@ -1,0 +1,4 @@
+Excellent. Whisper is already installed and ready to go.
+Let me test it to make sure everything works.
+The models will download to your cache folder on first run.
+But after that, it's completely offline speed recognition.
