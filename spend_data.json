@@ -1,0 +1,60 @@
+{
+  "generated_at": "2026-03-02T12:12:55.897019+00:00",
+  "budget_monthly": 100,
+  "current_month": "2026-03",
+  "current_month_total": 40.0,
+  "current_month_api": 0,
+  "current_month_subs": 40.0,
+  "today": {
+    "cost": 0,
+    "tokens_in": 0,
+    "tokens_out": 0
+  },
+  "monthly_history": [
+    {
+      "month": "2026-03",
+      "total": 40.0,
+      "breakdown": {
+        "Claude Pro": 20.0,
+        "ChatGPT Plus": 20.0
+      }
+    }
+  ],
+  "daily_history": [],
+  "model_breakdown": [],
+  "subscriptions": [
+    {
+      "name": "Claude Pro",
+      "provider": "Anthropic",
+      "type": "subscription",
+      "cost_monthly": 20.0,
+      "currency": "USD",
+      "active": true,
+      "color": "#d97706",
+      "icon": "\ud83d\udfe0"
+    },
+    {
+      "name": "ChatGPT Plus",
+      "provider": "OpenAI",
+      "type": "subscription",
+      "cost_monthly": 20.0,
+      "currency": "USD",
+      "active": true,
+      "color": "#10a37f",
+      "icon": "\ud83d\udfe2"
+    }
+  ],
+  "elevenlabs": {
+    "provider": "ElevenLabs",
+    "tier": "starter",
+    "chars_used": 11083,
+    "chars_limit": 38948,
+    "chars_pct": 28.5,
+    "monthly_cost": 5
+  },
+  "providers": [
+    "OpenAI",
+    "Anthropic",
+    "ElevenLabs"
+  ]
+}
