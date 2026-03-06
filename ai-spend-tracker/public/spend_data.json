@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-05T07:00:18.856477+00:00",
+  "generated_at": "2026-03-06T07:00:24.653903+00:00",
   "budget_monthly": 100,
   "current_month": "2026-03",
   "current_month_total": 40.0,
@@ -47,14 +47,14 @@
   "elevenlabs": {
     "provider": "ElevenLabs",
     "tier": "starter",
-    "chars_used": 11944,
+    "chars_used": 15165,
     "chars_limit": 38948,
-    "chars_pct": 30.7,
+    "chars_pct": 38.9,
     "monthly_cost": 5
   },
   "providers": [
+    "Anthropic",
     "ElevenLabs",
-    "OpenAI",
-    "Anthropic"
+    "OpenAI"
   ]
 }
