@@ -1,0 +1,65 @@
+{
+  "last_updated": "2026-03-07",
+  "models": [
+    {
+      "model": "claude-sonnet-4-6",
+      "provider": "Anthropic",
+      "use_case": "Planning, brainstorming, main session",
+      "context": "200k",
+      "cost_in": "$3.00",
+      "cost_out": "$15.00",
+      "rpm": 1000,
+      "status": "active"
+    },
+    {
+      "model": "gpt-5.4",
+      "provider": "OpenAI",
+      "use_case": "Quality writing, Bluesky drafts",
+      "context": "128k",
+      "cost_in": "$15.00",
+      "cost_out": "$60.00",
+      "rpm": 500,
+      "status": "active"
+    },
+    {
+      "model": "gpt-5.4-pro",
+      "provider": "OpenAI",
+      "use_case": "Deep reasoning (available, not yet used)",
+      "context": "128k",
+      "cost_in": "$30.00",
+      "cost_out": "$120.00",
+      "rpm": 500,
+      "status": "watch"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "provider": "OpenAI",
+      "use_case": "Volume tasks — scraper summaries, classification",
+      "context": "128k",
+      "cost_in": "$0.15",
+      "cost_out": "$0.60",
+      "rpm": 5000,
+      "status": "active"
+    },
+    {
+      "model": "gemini-3-pro-preview",
+      "provider": "Google",
+      "use_case": "Image generation (nano-banana-pro skill)",
+      "context": "1M",
+      "cost_in": "$1.25",
+      "cost_out": "$5.00",
+      "rpm": 60,
+      "status": "active"
+    },
+    {
+      "model": "elevenlabs-tts",
+      "provider": "ElevenLabs",
+      "use_case": "Voice synthesis — all responses",
+      "context": "N/A",
+      "cost_in": "$0.30/1k chars",
+      "cost_out": "N/A",
+      "rpm": 10,
+      "status": "active"
+    }
+  ]
+}
