@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-16T07:00:21.295848+00:00",
+  "generated_at": "2026-03-17T07:00:24.263811+00:00",
   "budget_monthly": 100,
   "current_month": "2026-03",
   "current_month_total": 40.0,
@@ -47,9 +47,9 @@
   "elevenlabs": {
     "provider": "ElevenLabs",
     "tier": "starter",
-    "chars_used": 21103,
-    "chars_limit": 38948,
-    "chars_pct": 54.2,
+    "chars_used": 0,
+    "chars_limit": 47256,
+    "chars_pct": 0.0,
     "monthly_cost": 5
   },
   "providers": [
