@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-03-31T06:00:14.872163+00:00",
+  "generated_at": "2026-04-01T06:00:20.123643+00:00",
   "budget_monthly": 100,
-  "current_month": "2026-03",
+  "current_month": "2026-04",
   "current_month_total": 40.0,
   "current_month_api": 0,
   "current_month_subs": 40.0,
@@ -12,7 +12,7 @@
   },
   "monthly_history": [
     {
-      "month": "2026-03",
+      "month": "2026-04",
       "total": 40.0,
       "breakdown": {
         "Claude Pro": 20.0,
@@ -47,14 +47,14 @@
   "elevenlabs": {
     "provider": "ElevenLabs",
     "tier": "starter",
-    "chars_used": 12573,
+    "chars_used": 12922,
     "chars_limit": 47256,
-    "chars_pct": 26.6,
+    "chars_pct": 27.3,
     "monthly_cost": 5
   },
   "providers": [
+    "OpenAI",
     "ElevenLabs",
-    "Anthropic",
-    "OpenAI"
+    "Anthropic"
   ]
 }
