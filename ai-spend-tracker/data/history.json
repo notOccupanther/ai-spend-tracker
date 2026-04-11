@@ -1,0 +1,11 @@
+{
+  "openai_daily": [],
+  "elevenlabs": {
+    "provider": "ElevenLabs",
+    "tier": "starter",
+    "chars_used": 40910,
+    "chars_limit": 47256,
+    "chars_pct": 86.6,
+    "monthly_cost": 5
+  }
+}
