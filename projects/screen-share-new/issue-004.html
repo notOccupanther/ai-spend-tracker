@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Screen Share &mdash; Issue 004: Performance</title>
+  <meta name="description" content="Performance — the role we play, the one they let us. Screen Share Issue 004." />
+  <link rel="canonical" href="https://screenshare.watch/issue-004.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://screenshare.watch/issue-004.html" />
+  <meta property="og:title" content="Screen Share Issue 004: Performance" />
+  <meta property="og:description" content="Performance — the role we play, the one they let us. All About Eve, The Comeback, Bait — and what it costs to be seen." />
+  <meta property="og:image" content="https://image.tmdb.org/t/p/w1280/blBzZaatPWVuWpXEnPscMA4Xp6m.jpg" />
+  <meta property="og:site_name" content="Screen Share" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Screen Share Issue 004: Performance" />
+  <meta name="twitter:description" content="Performance — the role we play, the one they let us" />
+  <meta name="twitter:image" content="https://image.tmdb.org/t/p/w1280/blBzZaatPWVuWpXEnPscMA4Xp6m.jpg" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Screen Share Issue 004: Performance","description":"Performance — the role we play, the one they let us","url":"https://screenshare.watch/issue-004.html","publisher":{"@type":"Organization","name":"Screen Share","url":"https://screenshare.watch"},"datePublished":"2026-04-25"}</script>
+  <link rel="alternate" type="application/rss+xml" title="Screen Share" href="https://screenshare.watch/feed.xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #080810; --surface: #111118; --surface-2: #18181f;
+      --gold: #f59e0b; --gold-dim: rgba(245,158,11,0.15); --gold-border: rgba(245,158,11,0.25);
+      --crimson: #dc2626; --text: #e8e8ed; --text-muted: #8888a0; --text-dim: #555568;
+      --border: rgba(255,255,255,0.06);
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E"); background-size: 180px 180px; mix-blend-mode: overlay; }
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.55s ease, transform 0.55s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; height: 60px; background: rgba(10,10,15,0.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 800; color: var(--text); letter-spacing: 0.02em; text-decoration: none; }
+    .nav-logo span { color: var(--gold); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { font-size: 0.8rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--gold); }
+    .hero { position: relative; min-height: 100vh; display: flex; align-items: flex-end; overflow: hidden; }
+    .hero-backdrop { position: absolute; inset: 0; background-size: cover; background-position: center 20%; transform: scale(1.03); transition: transform 8s ease-out; }
+    .hero:hover .hero-backdrop { transform: scale(1.0); }
+    .hero-grain { position: absolute; inset: 0; z-index: 1; opacity: 0.06; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E"); background-size: 180px 180px; pointer-events: none; }
+    .hero-vignette { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(10,10,15,0.3) 0%, rgba(10,10,15,0.1) 30%, rgba(10,10,15,0.6) 65%, rgba(10,10,15,0.97) 100%); }
+    .hero-vignette-sides { position: absolute; inset: 0; background: linear-gradient(to right, rgba(10,10,15,0.7) 0%, transparent 40%, transparent 60%, rgba(10,10,15,0.4) 100%); }
+    .hero-issue-badge { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(214,179,106,0.12); border: 1px solid rgba(214,179,106,0.3); color: var(--gold); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; padding: 0.35rem 0.85rem; border-radius: 2rem; margin-bottom: 1.25rem; }
+    .hero-content { position: relative; z-index: 2; width: 100%; padding: 2.5rem 2.5rem 4rem; max-width: 900px; }
+    .hero-eyebrow { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; }
+    .hero-eyebrow-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); }
+    .hero-eyebrow-date { font-size: 0.7rem; font-weight: 400; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+    .hero-eyebrow-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--text-dim); }
+    .hero-theme-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(232,232,237,0.4); margin-bottom: 0.5rem; }
+    .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(2.4rem,6vw,4.5rem); font-weight: 800; line-height: 1.08; letter-spacing: -0.01em; color: #fff; margin-bottom: 1rem; max-width: 780px; padding-top: 1.25rem; }
+    .hero-title::before { content: ''; display: block; width: 48px; height: 1px; background: var(--gold); margin-bottom: 1.1rem; opacity: 0.75; }
+    .hero-tagline { font-size: clamp(0.95rem,1.8vw,1.1rem); color: rgba(232,232,237,0.75); max-width: 520px; line-height: 1.65; margin-bottom: 2rem; font-weight: 300; }
+    .hero-meta { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem; }
+    .hero-meta-film { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+    .hero-meta-film span { color: var(--text); }
+    .btn-primary { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.75rem; background: var(--gold); color: #0a0a0f; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; border: none; cursor: pointer; transition: background 0.2s, transform 0.15s; }
+    .btn-primary:hover { background: #fbbf24; transform: translateY(-1px); }
+    .btn-ghost { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.75rem; background: transparent; color: var(--text); font-size: 0.82rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; border: 1px solid var(--border); cursor: pointer; transition: border-color 0.2s, color 0.2s; }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+    .hero-scroll-hint { position: absolute; bottom: 1.5rem; right: 2.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; opacity: 0.4; }
+    .hero-scroll-hint span { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; writing-mode: vertical-rl; }
+    .hero-scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--text-muted), transparent); }
+    .editors-note { padding: 3rem 2.5rem 2rem; max-width: 1200px; margin: 0 auto; }
+    .editors-note-inner { border-left: 2px solid var(--gold); padding: 0 0 0 2rem; }
+    .editors-note-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.25rem; }
+    .editors-note-text { font-size: 1rem; line-height: 1.85; color: rgba(232,232,237,0.78); font-weight: 300; margin-bottom: 0.9rem; font-style: italic; }
+    .editors-note-text em { font-style: normal; color: var(--text); font-weight: 500; }
+    .editors-note-sig { display: flex; align-items: baseline; gap: 0.75rem; margin-top: 1.5rem; opacity: 0; transition: opacity 0.6s ease; }
+    .editors-note-sig.unraveled { opacity: 1; }
+    .editors-note-name { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--text); }
+    .editors-note-role { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
+    .unravel-word { display: inline-block; opacity: 0; transform: translateY(7px); transition: opacity 0.35s ease, transform 0.35s ease; }
+    .unravel-word.visible { opacity: 1; transform: translateY(0); }
+    section { padding: 5rem 2.5rem; max-width: 1200px; margin: 0 auto; }
+    .section-divider { width: 100%; height: 1px; background: linear-gradient(to right, transparent, var(--gold-border), transparent); margin: 0 2.5rem; max-width: 1200px; }
+    .section-eyebrow { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2.5rem; }
+    .section-eyebrow-icon { font-size: 1rem; }
+    .section-eyebrow-label { font-size: 1rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
+    .section-eyebrow-desc { font-size: 0.88rem; color: var(--text-muted); font-style: italic; font-weight: 400; }
+    .section-eyebrow-pipe { color: var(--text-dim); font-size: 0.8rem; }
+    .rewind-card { display: grid; grid-template-columns: 200px 1fr; gap: 3rem; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--gold); padding: 2.5rem; transition: border-color 0.2s, transform 0.2s; }
+    .rewind-card:hover { border-left-color: var(--gold); border-color: var(--gold-border); transform: translateY(-2px); }
+    .rewind-poster { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; filter: saturate(0.85); transition: filter 0.3s; }
+    .rewind-card:hover .rewind-poster { filter: saturate(1); }
+    .rewind-body { display: flex; flex-direction: column; justify-content: center; }
+    .rewind-year { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; margin-bottom: 0.5rem; }
+    .rewind-film-title { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 1.25rem; line-height: 1.15; }
+    .rewind-text { font-size: 1rem; line-height: 1.75; color: rgba(232,232,237,0.8); margin-bottom: 1.25rem; font-weight: 300; }
+    .rewind-companion { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .rewind-companion-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.5rem; }
+    .rewind-companion-title { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; }
+    .rewind-companion-body { font-size: 0.88rem; line-height: 1.7; color: rgba(232,232,237,0.6); font-weight: 300; }
+    .rewind-availability { margin-top: 1.5rem; font-size: 0.8rem; font-style: italic; color: var(--text-dim); }
+    .argument-question { font-family: 'Playfair Display', serif; font-size: clamp(1.3rem,2.8vw,1.9rem); font-weight: 700; font-style: italic; line-height: 1.35; color: #fff; margin-bottom: 2.5rem; padding-left: 1.5rem; border-left: 3px solid var(--crimson); }
+    .argument-intro { font-size: 1.05rem; line-height: 1.8; color: rgba(232,232,237,0.82); font-weight: 300; margin-bottom: 2.5rem; }
+    .argument-camps { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .argument-camp { background: var(--surface); border: 1px solid var(--border); padding: 1.75rem; transition: border-color 0.2s, transform 0.2s; }
+    .argument-camp:hover { border-color: rgba(255,255,255,0.12); transform: translateY(-2px); }
+    .argument-camp-label { font-size: 0.65rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.9rem; padding: 0.25rem 0.6rem; display: inline-block; }
+    .argument-camp-label.reading-a { background: rgba(220,38,38,0.15); color: #f87171; }
+    .argument-camp-label.reading-b { background: rgba(245,158,11,0.12); color: var(--gold); }
+    .argument-camp-text { font-size: 0.95rem; line-height: 1.7; color: rgba(232,232,237,0.75); font-weight: 300; }
+    .argument-provocation { margin-top: 2rem; padding: 1.5rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border); font-size: 0.9rem; line-height: 1.75; color: var(--text-muted); font-style: italic; }
+    .vote-widget { background: var(--surface); border: 1px solid var(--border); padding: 2rem; margin-top: 1.5rem; }
+    .vote-prompt { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1.25rem; text-align: center; }
+    .vote-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.5rem; }
+    .vote-btn { padding: 0.85rem 1.25rem; text-align: center; width: 100%; background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 0.82rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+    .vote-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--text); }
+    .vote-btn.vote-a:hover:not(:disabled) { border-color: #f87171; color: #f87171; }
+    .vote-btn.vote-a.selected { background: rgba(220,38,38,0.15); border-color: #f87171; color: #f87171; }
+    .vote-btn.vote-b.selected { background: var(--gold-dim); border-color: var(--gold); color: var(--gold); }
+    .vote-btn:disabled { cursor: default; opacity: 1; }
+    .vote-results { display: none; }
+    .vote-results.visible { display: block; }
+    .vote-result-row { margin-bottom: 1rem; }
+    .vote-result-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; }
+    .vote-result-name { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+    .vote-result-name.a { color: #f87171; }
+    .vote-result-name.b { color: var(--gold); }
+    .vote-result-pct { font-size: 0.8rem; font-weight: 700; color: var(--text); }
+    .vote-result-track { height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+    .vote-result-fill { height: 100%; border-radius: 3px; width: 0; transition: width 0.7s cubic-bezier(0.4,0,0.2,1); }
+    .vote-result-fill.a { background: linear-gradient(to right, #991b1b, #ef4444); }
+    .vote-result-fill.b { background: linear-gradient(to right, #92400e, var(--gold)); }
+    .vote-count { font-size: 0.72rem; color: var(--text-dim); text-align: center; margin-top: 0.75rem; }
+    .vote-your-choice { display: none; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); text-align: center; margin-top: 0.5rem; }
+    .vote-your-choice.visible { display: block; }
+    .vote-your-choice span { color: var(--text-muted); font-weight: 600; }
+    .mood-chips-wrapper { overflow-x: auto; margin-bottom: 2.5rem; padding-bottom: 0.5rem; scrollbar-width: none; }
+    .mood-chips-wrapper::-webkit-scrollbar { display: none; }
+    .mood-chips { display: flex; gap: 0.75rem; width: max-content; }
+    .mood-chip { display: flex; align-items: center; gap: 0.4rem; padding: 0.55rem 1.1rem; background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: all 0.2s; white-space: nowrap; border-radius: 2px; user-select: none; }
+    .mood-chip:hover { border-color: var(--gold-border); color: var(--text); }
+    .mood-chip.active { background: var(--gold-dim); border-color: var(--gold); color: var(--gold); }
+    .mood-films { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; min-height: 340px; }
+    .film-card { background: var(--surface); border: 1px solid var(--border); overflow: hidden; cursor: pointer; transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.2s; }
+    .film-card:hover { border-color: var(--gold-border); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.5); }
+    .film-card-poster { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; transition: filter 0.3s, transform 0.4s; filter: brightness(0.88); }
+    .film-card:hover .film-card-poster { filter: brightness(1); transform: scale(1.02); }
+    .film-card-body { padding: 1rem; }
+    .film-card-title { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 0.25rem; }
+    .film-card-year { font-size: 0.75rem; color: var(--text-dim); }
+    .film-card-mood-tag { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-top: 0.5rem; }
+    .film-card-primer { font-size: 0.78rem; line-height: 1.6; color: var(--text-muted); font-weight: 300; margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px solid var(--border); }
+    .mood-vote { background: var(--surface); border: 1px solid var(--border); padding: 1.75rem; margin-top: 1.25rem; }
+    .mood-vote-prompt { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1.1rem; }
+    .mood-vote-btns { display: flex; flex-direction: column; gap: 0.5rem; }
+    .mood-vote-btn { padding: 0.7rem 1rem; background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 0.82rem; font-weight: 500; text-align: left; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .mood-vote-btn:hover:not(:disabled) { border-color: var(--gold-border); color: var(--text); }
+    .mood-vote-btn.selected { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+    .mood-vote-btn:disabled { cursor: default; opacity: 1; }
+    .mood-vote-btn-year { font-size: 0.72rem; color: var(--text-dim); flex-shrink: 0; }
+    .mood-vote-results { margin-top: 1.25rem; display: none; }
+    .mood-vote-results.visible { display: block; }
+    .mood-vote-result-row { margin-bottom: 0.85rem; }
+    .mood-vote-result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem; }
+    .mood-vote-result-title { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70%; }
+    .mood-vote-result-title.winner { color: var(--gold); }
+    .mood-vote-result-title.chosen { color: var(--text); }
+    .mood-vote-result-pct { font-size: 0.78rem; font-weight: 700; color: var(--text); flex-shrink: 0; }
+    .mood-vote-result-track { height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+    .mood-vote-result-fill { height: 100%; border-radius: 2px; width: 0; transition: width 0.7s cubic-bezier(0.4,0,0.2,1); }
+    .mood-vote-result-fill.winner { background: var(--gold); }
+    .mood-vote-result-fill.chosen { background: rgba(232,232,237,0.5); }
+    .mood-vote-result-fill.other { background: rgba(255,255,255,0.15); }
+    .mood-vote-total { font-size: 0.7rem; color: var(--text-dim); margin-top: 0.6rem; }
+    .flashpoint-card { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--crimson); padding: 2.5rem; display: grid; grid-template-columns: 160px 1fr; gap: 2.5rem; transition: border-color 0.2s, transform 0.2s; }
+    .flashpoint-card:hover { border-color: rgba(220,38,38,0.3); transform: translateY(-2px); }
+    .flashpoint-poster { width: 100%; aspect-ratio: 2/3; object-fit: cover; filter: saturate(0.7) brightness(0.8); transition: filter 0.3s; }
+    .flashpoint-card:hover .flashpoint-poster { filter: saturate(0.9) brightness(0.95); }
+    .flashpoint-year { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.2em; color: #f87171; text-transform: uppercase; margin-bottom: 0.5rem; }
+    .flashpoint-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; color: #fff; margin-bottom: 1.25rem; line-height: 1.2; }
+    .flashpoint-body { font-size: 0.95rem; line-height: 1.8; color: rgba(232,232,237,0.78); font-weight: 300; margin-bottom: 1.25rem; }
+    .signal-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+    .signal-card { background: var(--surface); border: 1px solid var(--border); border-top: 2px solid var(--gold); padding: 1.75rem; transition: border-color 0.2s, transform 0.2s; }
+    .signal-card:hover { border-color: var(--gold-border); transform: translateY(-2px); }
+    .signal-card-label { font-size: 0.65rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.9rem; padding: 0.25rem 0.6rem; display: inline-block; background: rgba(245,158,11,0.1); }
+    .signal-card-body { font-size: 0.9rem; line-height: 1.75; color: rgba(232,232,237,0.75); font-weight: 300; }
+    .signal-more { display: inline-block; margin-top: 1rem; font-size: 0.78rem; font-weight: 600; color: var(--gold); text-decoration: none; letter-spacing: 0.06em; }
+    .signal-more:hover { text-decoration: underline; }
+    .signal-card.deal { border-top-color: var(--gold); }
+    .signal-card.deal .signal-card-label { color: var(--gold); background: rgba(245,158,11,0.1); }
+    .signal-card.resistance { border-top-color: var(--crimson); }
+    .signal-card.resistance .signal-card-label { color: #f87171; background: rgba(220,38,38,0.12); }
+    .signal-card.tool { border-top-color: #2dd4bf; }
+    .signal-card.tool .signal-card-label { color: #2dd4bf; background: rgba(45,212,191,0.1); }
+    .pulse-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+    .pulse-card-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; filter: brightness(0.75) saturate(0.8); transition: filter 0.4s; }
+    .pulse-card:hover .pulse-card-img { filter: brightness(0.88) saturate(0.9); }
+    .pulse-card-img-wrap { position: relative; overflow: hidden; }
+    .pulse-card-img-wrap::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60%; background: linear-gradient(to bottom, transparent, var(--surface)); pointer-events: none; }
+    .pulse-card { background: var(--surface); border: 1px solid var(--border); padding: 0; overflow: hidden; transition: border-color 0.2s, transform 0.2s; }
+    .pulse-card:hover { border-color: rgba(255,255,255,0.1); transform: translateY(-2px); }
+    .pulse-card-type { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 1rem; padding: 1.25rem 1.75rem 0; }
+    .pulse-card-title { font-family: 'Playfair Display', serif; font-size: 1.35rem; font-weight: 700; color: #fff; padding: 0 1.75rem; margin-bottom: 0.75rem; line-height: 1.2; }
+    .pulse-card-desc { font-size: 0.88rem; line-height: 1.65; color: rgba(232,232,237,0.7); font-weight: 300; padding: 0 1.75rem 1.75rem; }
+    .pulse-card-source { font-size: 0.72rem; color: var(--text-dim); padding: 0 1.75rem 1.75rem; font-style: italic; }
+    @media (max-width: 768px) {
+      .argument-camps { grid-template-columns: 1fr; }
+      .mood-films { grid-template-columns: 1fr; }
+      .signal-grid { grid-template-columns: 1fr; }
+      .pulse-grid { grid-template-columns: 1fr; }
+      .rewind-card { grid-template-columns: 1fr; gap: 1.5rem; }
+      .flashpoint-card { grid-template-columns: 1fr; gap: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="https://screenshare.watch" class="nav-logo">Screen <span>Share</span></a>
+    <ul class="nav-links">
+      <li><a href="https://screenshare.watch">Home</a></li>
+      <li><a href="https://screenshare.watch/archive">Archive</a></li>
+    </ul>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-backdrop" style="background-image: url('https://image.tmdb.org/t/p/w1280/blBzZaatPWVuWpXEnPscMA4Xp6m.jpg');"></div>
+    <div class="hero-grain"></div>
+    <div class="hero-vignette"></div>
+    <div class="hero-vignette-sides"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span class="hero-eyebrow-label">Issue 004</span>
+        <div class="hero-eyebrow-dot"></div>
+        <span class="hero-eyebrow-date">April 25, 2026</span>
+      </div>
+      <div class="hero-theme-label">Theme</div>
+      <h1 class="hero-title">Performance<br />— the role we play, the one they let us</h1>
+      <p class="hero-tagline">What does it cost to be seen? All About Eve doesn't resolve the question. Neither do we. But the films this week suggest you start by asking who decides what you're allowed to perform.</p>
+      <div class="hero-meta">
+        <span class="hero-meta-film">Lead Film: <span>All About Eve (1950)</span></span>
+      </div>
+    </div>
+    <div class="hero-scroll-hint">
+      <span>Scroll</span>
+      <div class="hero-scroll-line"></div>
+    </div>
+  </div>
+
+  <div class="editors-note reveal">
+    <div class="editors-note-inner">
+      <div class="editors-note-label">A note from the editor</div>
+      <p class="editors-note-text">Performance is the oldest contract in cinema. You perform; I watch. That contract has always been fragile. The question isn't whether the performance is real — it's who gets to decide what counts as real in the first place. All About Eve understood this in 1950: Eve Harrington doesn't fail because she's fake. She succeeds because her performance is more convincing than Margo's, more complete, more total. The tragedy of the film is that it shows us a world where the best performance wins, and we all know how that ends.</p>
+      <p class="editors-note-text">Seventy-five years later, we live in that world. Every screen is a stage. Every scroll is a performance. Every like is a vote on whether your performance was convincing enough. The machinery has gotten faster, the feedback more immediate, the stakes somehow both higher and lower. You perform your life in real time and the audience decides who you are before you finish the sentence.</p>
+      <p class="editors-note-text">This issue circles the question that All About Eve raised but never quite answered: What's left when the performance becomes the only thing that matters?</p>
+      <div class="editors-note-sig">
+        <span class="editors-note-name">Niall</span>
+        <span class="editors-note-role">Editor, Screen Share</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <section id="rewind">
+    <div class="section-eyebrow reveal">
+      <span class="section-eyebrow-icon">&#9654;</span>
+      <span class="section-eyebrow-label">The Rewind</span>
+      <span class="section-eyebrow-pipe">|</span>
+      <span class="section-eyebrow-desc">A film from the archive that speaks to right now</span>
+    </div>
+    <div class="rewind-card reveal">
+      <img class="rewind-poster" src="https://image.tmdb.org/t/p/w500/l4hdgMBgB7aQm5XYAG4VAGmR6H8.jpg" alt="All About Eve (1950)" loading="eager" onerror="this.style.background='#1a1a22'; this.removeAttribute('src');" />
+      <div class="rewind-body">
+        <div class="rewind-year">1950 &middot; Joseph L. Mankiewicz</div>
+        <h2 class="rewind-film-title">All About Eve</h2>
+        <p class="rewind-text">Eve Harrington arrives at a Broadway stage door with a story: she was at every performance, she has loved Margo Channing since she was a child, she has nothing but devotion. Margo takes her under her wing. By the third act, Eve has stolen her roles, her boyfriend, and her future. What <em>All About Eve</em> understands with surgical precision is that performance and deception are not opposites — they are the same skill, deployed in different rooms. Margo is a star who performs Margo Channing eight times a week. Eve is a woman performing devotion, then humility, then talent, then entitlement. The film asks: where is the line between the character you play and who you become when you play it?</p>
+        <p class="rewind-text">Seventy-five years later, the answer has not changed. It has only become faster. The machinery of visibility — social media, streaming, constant documentation — has collapsed the backstage and the stage into one. There is no longer a private self to perform from. You are what you perform, and performance is what survives you. <em>All About Eve</em> captured this moment in 1950 because it understood that performance was never about honesty. It was about power: who gets to decide what you're allowed to be, and for how long you're allowed to be it.</p>
+        <div class="rewind-companion">
+          <div class="rewind-companion-label">Watch Alongside</div>
+          <div class="rewind-companion-title">Sunset Boulevard (1950, Billy Wilder)</div>
+          <div class="rewind-companion-body">Released the same year, Sunset Boulevard is <em>All About Eve</em> from the other side of the mirror. Norma Desmond is not ascending; she is clinging to a performance that the industry has already written off. Both films understand that in Hollywood, performance is the only currency that matters — and when it's spent, you disappear entirely.</div>
+        </div>
+        <div class="rewind-availability"><em>All About Eve</em> is available to stream on multiple platforms and is also held in the National Film Registry.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <section id="argument">
+    <div class="section-eyebrow reveal">
+      <span class="section-eyebrow-icon">&#128172;</span>
+      <span class="section-eyebrow-label">The Argument</span>
+      <span class="section-eyebrow-pipe">|</span>
+      <span class="section-eyebrow-desc">One question. No verdict.</span>
+    </div>
+    <blockquote class="argument-question reveal">&ldquo;Is there a self beneath the performance, or is the performance all there ever was?&rdquo;</blockquote>
+    <p class="argument-intro reveal">The streaming age has made performance visible in ways cinema alone never could. You can now watch someone perform their life in real-time, edit it into narrative, and monetise the edit. The person and the persona have become one product. What happens to the question of authenticity when there is no longer a backstage to retreat to?</p>
+    <div class="argument-camps reveal">
+      <div class="argument-camp">
+        <span class="argument-camp-label reading-a">Reading A &mdash; &ldquo;The Performance Is the Prison&rdquo;</span>
+        <p class="argument-camp-text">There is a self underneath, and the performance suffocates it. Watch someone stream for twelve hours and you see a performance of energy that no human body can sustain — because it isn't sustainable. It's a construction. The person inside experiences this as splitting: the version they broadcast and the version that goes home. SAG-AFTRA's central demand in their 2026 negotiations wasn't about money. It was about the right to not be cloned, scanned, and deployed without consent — about the right to a self that isn't monetised. The performance is increasingly the only version of you that survives in public space, and that asymmetry creates a kind of erasure. You become the performance because there's nothing left of you but the data.</p>
+      </div>
+      <div class="argument-camp">
+        <span class="argument-camp-label reading-b">Reading B &mdash; &ldquo;The Self Was Always a Performance&rdquo;</span>
+        <p class="argument-camp-text">The notion that there's a "true self" waiting behind the performance is the lie we tell ourselves to feel stable. Erving Goffman argued this in 1959: the self is not a thing, it's a repertoire of behaviours adjusted to context. What's changed is not the nature of performance — it's the archive. Every performance used to disappear. Now every performance is permanent, searchable, and separable from context. The crisis isn't that people are "fake." It's that we can now see all our selves at once and experience the contradiction as fragmentation. But the fragmentation was always there. We just had the luxury of not seeing it.</p>
+      </div>
+    </div>
+    <div class="argument-provocation reveal"><strong>Provocation:</strong> If you stream your entire day, and your audience sees the livestream as the real version of you, what exactly have you lied about?</div>
+    <div class="vote-widget reveal" id="voteWidget">
+      <div class="vote-prompt">Which reading lands for you?</div>
+      <div class="vote-buttons" id="voteButtons">
+        <button class="vote-btn vote-a" id="voteBtnA" onclick="castVote('a')">The performance is the prison</button>
+        <button class="vote-btn vote-b" id="voteBtnB" onclick="castVote('b')">The self was always a performance</button>
+      </div>
+      <div class="vote-results" id="voteResults">
+        <div class="vote-result-row"><div class="vote-result-label"><span class="vote-result-name a">The Performance Is the Prison</span><span class="vote-result-pct" id="pctA">0%</span></div><div class="vote-result-track"><div class="vote-result-fill a" id="fillA"></div></div></div>
+        <div class="vote-result-row"><div class="vote-result-label"><span class="vote-result-name b">The Self Was Always a Performance</span><span class="vote-result-pct" id="pctB">0%</span></div><div class="vote-result-track"><div class="vote-result-fill b" id="fillB"></div></div></div>
+        <div class="vote-count" id="voteCount"></div>
+        <div class="vote-your-choice" id="voteYourChoice">Your vote: <span id="voteChoiceLabel"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <section id="discover">
+    <div class="section-eyebrow reveal">
+      <span class="section-eyebrow-icon">&#127917;</span>
+      <span class="section-eyebrow-label">Discover</span>
+      <span class="section-eyebrow-pipe">|</span>
+      <span class="section-eyebrow-desc">Not genre. Emotion.</span>
+    </div>
+    <div class="mood-chips-wrapper reveal">
+      <div class="mood-chips" id="moodChips">
+        <button class="mood-chip active" data-mood="character-study">Character Study</button>
+        <button class="mood-chip" data-mood="identity-theft">Identity Theft</button>
+        <button class="mood-chip" data-mood="stage-fright">Stage Fright</button>
+        <button class="mood-chip" data-mood="method-acting">Method Acting</button>
+        <button class="mood-chip" data-mood="fame-costs">What Fame Costs</button>
+        <button class="mood-chip" data-mood="double-life">Double Life</button>
+        <button class="mood-chip" data-mood="transformation">Transformation</button>
+      </div>
+    </div>
+    <div class="mood-films" id="moodFilms"></div>
+    <div class="mood-vote" id="moodVote">
+      <div class="mood-vote-prompt">Which would you watch tonight?</div>
+      <div class="mood-vote-btns" id="moodVoteBtns"></div>
+      <div class="mood-vote-results" id="moodVoteResults"></div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <section id="flashpoint">
+    <div class="section-eyebrow reveal">
+      <span class="section-eyebrow-icon">&#127959;</span>
+      <span class="section-eyebrow-label">Flashpoint</span>
+      <span class="section-eyebrow-pipe">|</span>
+      <span class="section-eyebrow-desc">What's hot now</span>
+    </div>
+
+    <div class="flashpoint-card">
+      <img src="https://image.tmdb.org/t/p/w342/mZ7YFEOxAKfjXJKWm0sYFXQ8n8A.jpg" alt="Industry" class="flashpoint-poster" />
+      <div>
+        <div class="flashpoint-year">2020–present</div>
+        <h3 class="flashpoint-title">Industry, Season 4</h3>
+        <div class="flashpoint-body">Industry has always been a show about people performing competence they haven't yet earned — graduate recruits at a London investment bank running the character of someone who belongs. Season 4 adds Charlie Heaton and Jack Farthing as new entrants, and the show's engine — Harper Stern's self-invention, Robert Spearing's studied ruthlessness — remains the most sustained examination on television of what professional performance does to actual selfhood. The finance world is the ideal setting: every relationship is also a transaction, every sentence is also a pitch. Season 4 maintains the show's trajectory upward. This is the show that got better as it got more confident about what it was.</div>
+        <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border); font-size: 0.9rem; color: rgba(232,232,237,0.7); font-style: italic;">Critical temperature: Warm to hot. 87 Metacritic is the best score in the show's run.</div>
+      </div>
+    </div>
+
+    <div class="flashpoint-card">
+      <img src="https://image.tmdb.org/t/p/w342/6lFI03QZgXwGZLKtzUw4L8ZnyBv.jpg" alt="How to Get to Heaven from Belfast" class="flashpoint-poster" />
+      <div>
+        <div class="flashpoint-year">2026</div>
+        <h3 class="flashpoint-title">How to Get to Heaven from Belfast</h3>
+        <div class="flashpoint-body">Lisa McGee follows Derry Girls with a murder mystery set in 1990s Belfast, where young women have to perform innocence, decorum, and class aspiration within a society that polices all three. The Guardian's five-star review called it essential viewing. The show is about women who have mastered the role they were given and are now using that mastery as cover.</div>
+        <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border); font-size: 0.9rem; color: rgba(232,232,237,0.7); font-style: italic;">Critical temperature: Extremely warm in UK press; US coverage catching up. 95% RT with 39 reviews is not a fluke.</div>
+      </div>
+    </div>
+
+    <div class="flashpoint-card">
+      <img src="https://image.tmdb.org/t/p/w342/1MccRnw41qQjREuZkovqP2UX1i3.jpg" alt="The Night Manager" class="flashpoint-poster" />
+      <div>
+        <div class="flashpoint-year">2016–present</div>
+        <h3 class="flashpoint-title">The Night Manager, Season 2</h3>
+        <div class="flashpoint-body">Jonathan Pine is the character as construct — a man who performs whatever role the spy world requires, who has been performing so long the original self is archaeologically inaccessible. Season 2 puts him back in the field a decade later. Hiddleston is "reliably good" — precisely calibrated. The performance theme is less interrogated here than celebrated: Pine performs beautifully and the show knows it.</div>
+        <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border); font-size: 0.9rem; color: rgba(232,232,237,0.7); font-style: italic;">Caveat: Without Hugh Laurie's Roper, some critics feel the show has lost its sharpest antagonist.</div>
+      </div>
+    </div>
+
+    <div class="flashpoint-card">
+      <img src="https://image.tmdb.org/t/p/w342/2NKvKYtRgBN1zLrAfInkVoRNc94.jpg" alt="Lord of the Flies" class="flashpoint-poster" />
+      <div>
+        <div class="flashpoint-year">2026</div>
+        <h3 class="flashpoint-title">Lord of the Flies</h3>
+        <div class="flashpoint-body">The Golding novel is the purest distillation of performed civility — Ralph and Jack are not different people, they are the same person in different stages of performance collapse. The BBC adaptation takes a character-by-character approach per episode, structuring the disintegration as a series of individual performance failures. Formal ambition; audience reception is split, which tracks: formal ambition rarely plays as crowd-pleasing.</div>
+        <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border); font-size: 0.9rem; color: rgba(232,232,237,0.7); font-style: italic;">Caveat: Not yet available in the US until May.</div>
+      </div>
+    </div>
+
+    <div class="flashpoint-card">
+      <img src="https://image.tmdb.org/t/p/w342/j8EOKHTlSaorhXOKRT25ssEie6a.jpg" alt="Gomorrah: The Origins" class="flashpoint-poster" />
+      <div>
+        <div class="flashpoint-year">2026</div>
+        <h3 class="flashpoint-title">Gomorrah: The Origins</h3>
+        <div class="flashpoint-body">Marco D'Amore (who played Ciro in the original Gomorrah) directs and appears in this prequel, following Pietro as he constructs the criminal persona that crime culture requires. The show is literally about the invention of a performance — the self that crime culture demands. Built on the tradition of the original series.</div>
+        <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border); font-size: 0.9rem; color: rgba(232,232,237,0.7); font-style: italic;">Caveat: Genuinely obscure in English-language markets.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <section id="signal">
+    <div class="section-eyebrow">
+      <span class="section-eyebrow-label">The Signal</span>
+      <span class="section-eyebrow-pipe">|</span>
+      <span class="section-eyebrow-desc">Fortnight: April 11–25, 2026</span>
+    </div>
+
+    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.35rem; font-weight: 700; margin-top: 3rem; margin-bottom: 2rem; color: #fff;">Week of April 11, 2026</h3>
+
+    <div class="signal-grid">
+      <div class="signal-card deal">
+        <span class="signal-card-label">THE DEAL</span>
+        <h4 style="font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0.75rem 0; line-height: 1.3;">WGA Reaches Four-Year Deal With Studios; AI Training Payment Left on the Table</h4>
+        <div class="signal-card-body">The Writers Guild of America reached a tentative four-year agreement with the AMPTP on April 4, 2026, after less than a month of negotiations — a notably swift conclusion given the 148-day strike of 2023. The deal includes $321 million in health plan funding, improved streaming residuals, and a requirement that studios notify the WGA if they license writers' work for AI training. However, the studios did not agree to pay writers for that AI training use, which had been a union priority.</div>
+        <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-dim); font-style: italic;">Source: Variety, Los Angeles Times, NPR (April 4–9, 2026)</div>
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.95rem; color: rgba(232,232,237,0.8);">Why this matters: The notification-without-payment provision sets the template for how studios plan to treat writers' intellectual labour as AI feedstock — acknowledged, but not compensated.</div>
+      </div>
+
+      <div class="signal-card resistance">
+        <span class="signal-card-label">THE RESISTANCE</span>
+        <h4 style="font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0.75rem 0; line-height: 1.3;">ACTRA Issues "Do Not Work" Notice Over AI Startup Velvet's Casting Practices</h4>
+        <div class="signal-card-body">On March 19, 2026, the Union of British Columbia Performers (UBCP/ACTRA) issued a Do Not Work notice against Velvet, a US-based AI startup that had used Canadian casting networks to solicit actors for a project it described as an "AI casual conversation" training exercise. The union said Velvet was unable to confirm whether the project would adhere to ACTRA's collective agreement governing AI training use and digital replication of performers.</div>
+        <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-dim); font-style: italic;">Source: The Globe and Mail, UBCP/ACTRA official notice (March 19–20, 2026)</div>
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.95rem; color: rgba(232,232,237,0.8);">Why this matters: This is a direct test of whether AI companies can use the casting pipeline itself — the entry point for performers — as a data-harvesting channel without union oversight.</div>
+        <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(220,38,38,0.1); border-left: 2px solid #f87171; font-size: 0.85rem; color: #f87171; font-style: italic;">Note: Story broke March 19; included as prior-week context for direct relevance to the "Performance" theme.</div>
+      </div>
+
+      <div class="signal-card tool">
+        <span class="signal-card-label">THE TOOL</span>
+        <h4 style="font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0.75rem 0; line-height: 1.3;">Bollywood's Collective Artists Network Deploys AI Production Pipeline With Microsoft</h4>
+        <div class="signal-card-body">Collective Artists Network, one of Bollywood's largest talent agencies, is producing AI-generated video content at its Bengaluru studio using motion-capture data fed into AI character-generation systems. Microsoft confirmed to Reuters that it is providing AI computing infrastructure to Collective to help "shape the next wave of global storytelling." The partnership represents a talent agency — not a traditional studio — taking direct control of AI-generated content production.</div>
+        <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-dim); font-style: italic;">Source: Reuters (April 4, 2026)</div>
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.95rem; color: rgba(232,232,237,0.8);">Why this matters: When talent agencies become AI content producers, the line between representing performers and replacing them with synthetic versions of them collapses.</div>
+      </div>
+    </div>
+
+    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.35rem; font-weight: 700; margin-top: 3rem; margin-bottom: 2rem; color: #fff;">Week of April 18, 2026</h3>
+
+    <div class="signal-grid">
+      <div class="signal-card deal">
+        <span class="signal-card-label">THE DEAL</span>
+        <h4 style="font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0.75rem 0; line-height: 1.3;">Paramount Skydance Secures ~$24 Billion From Gulf Sovereign Wealth Funds for Warner Bros. Discovery Takeover</h4>
+        <div class="signal-card-body">Paramount Skydance locked in equity commitments of nearly $24 billion from three Middle Eastern sovereign wealth funds — led by Saudi Arabia, with participation from Qatar and Abu Dhabi — to back its pending acquisition of Warner Bros. Discovery. A WBD shareholder vote on the merger is scheduled for April 23. Paramount has simultaneously restructured its debt financing and expanded a revolving credit facility to $5 billion to prepare for the close.</div>
+        <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-dim); font-style: italic;">Source: Variety, Reuters (April 5–10, 2026)</div>
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.95rem; color: rgba(232,232,237,0.8);">Why this matters: If approved April 23, this deal concentrates ownership of Warner, HBO, DC, CNN, and Max under a single entity partly capitalised by Gulf state funds — reorienting who ultimately decides what stories get told at scale.</div>
+      </div>
+
+      <div class="signal-card resistance">
+        <span class="signal-card-label">THE RESISTANCE</span>
+        <h4 style="font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0.75rem 0; line-height: 1.3;">SAG-AFTRA Returns to the Table April 27 With AI Likeness Rights as the Central Fight</h4>
+        <div class="signal-card-body">SAG-AFTRA and the AMPTP will resume formal contract negotiations on April 27, 2026, under a mutual media blackout, after pausing to allow the WGA's faster-than-expected deal to conclude. National Executive Director Duncan Crabtree-Ireland is leading for the union; AMPTP President Greg Hessinger for the studios. The unresolved core issues are AI guardrails — specifically digital replication and likeness rights for performers — and streaming residuals.</div>
+        <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-dim); font-style: italic;">Source: Variety, Deadline, Screen Daily (April 6–7, 2026)</div>
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.95rem; color: rgba(232,232,237,0.8);">Why this matters: Unlike the WGA fight over written work, SAG-AFTRA's central demand is about ownership of a performer's physical self — what studios can scan, clone, and deploy without the actor present.</div>
+      </div>
+
+      <div class="signal-card tool">
+        <span class="signal-card-label">THE TOOL</span>
+        <h4 style="font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0.75rem 0; line-height: 1.3;">Hollywood Assistants Are Routinely Using AI for Script Coverage and Development, Despite WGA Prohibitions</h4>
+        <div class="signal-card-body">A Hollywood Reporter investigation published April 8, 2026, found that studio and production company assistants — below the WGA threshold — are regularly using generative AI for first-pass script coverage, notes, and development tasks, often at their employers' tacit encouragement. One assistant quoted: "When they say, 'You should be using AI,' the first thought in your head is: 'Are you asking me to teach you how to replace me with technology?'" The practice routes creative work through AI systems ungoverned by the new WGA protections, which apply only to credited writers.</div>
+        <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-dim); font-style: italic;">Source: The Hollywood Reporter (April 8, 2026)</div>
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.95rem; color: rgba(232,232,237,0.8);">Why this matters: The assistant class — historically the development pipeline's memory and judgment — is being conscripted into AI normalisation at the precise moment their seniors negotiated protections that don't extend downward.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <section id="pulse">
+    <div class="section-eyebrow">
+      <span class="section-eyebrow-label">Weekly Pulse</span>
+    </div>
+
+    <div class="pulse-grid">
+      <div class="pulse-card">
+        <div class="pulse-card-type">Most Talked About</div>
+        <h3 class="pulse-card-title">BBC Culture Best of 2026 List</h3>
+        <div class="pulse-card-desc">The list landing in April gave critics and audiences a shared frame of reference mid-year. Industry S4 and The Night Manager S2 appear to be the most discussed entries — both are shows built around characters performing versions of themselves for professional or social survival. The conversation around the list is less about individual titles and more about what the list says about the current critical appetite: prestige character drama, British production, moral ambiguity without resolution.</div>
+        <div class="pulse-card-source">April 2026 drop</div>
+      </div>
+
+      <div class="pulse-card">
+        <div class="pulse-card-type">Our Call — Most Likely to Split the Room</div>
+        <h3 class="pulse-card-title">The Beauty</h3>
+        <div class="pulse-card-desc">The Beauty is asking something audiences may not be ready to give. Ryan Murphy's body-horror satire — a drug that literally remakes you, with the side effect that you might eventually explode — sits precisely at the intersection of vanity, survival, and the performance of identity that runs through this issue. Work this formally committed to its premise divides; that's not a flaw, it's the mechanism. The BBC Culture 2026 list's placement of it alongside prestige drama is itself an editorial statement about what counts as serious television right now.</div>
+        <div class="pulse-card-source">FX/Hulu</div>
+      </div>
+
+      <div class="pulse-card">
+        <div class="pulse-card-type">Our Recommendation — If It Passed You By</div>
+        <h3 class="pulse-card-title">Bait</h3>
+        <div class="pulse-card-desc">Six sub-half-hour episodes, genuinely unclassifiable — industry satire, family comedy, psycho-drama, Bond pastiche — from a filmmaker and performer both operating at the edge of their range. The question at its centre (who does the industry decide gets to play the role, and what does the audition cost the person asking?) is the question this issue is built around. Start here if you haven't.</div>
+        <div class="pulse-card-source">Prime Video, 2026 | Metacritic 85 (Universal Acclaim, 18 critics)</div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 4rem; padding: 2rem; color: var(--text-muted); font-size: 0.95rem;">
+      <p>Screen Share is published fortnightly. Issue 005 publishes May 9, 2026.</p>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <section id="onscreen">
+    <div class="section-eyebrow">
+      <span class="section-eyebrow-label">On Screen: Television</span>
+    </div>
+
+    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem; color: #fff;">Airing Now</h3>
+
+    <div class="mood-films">
+      <div class="film-card">
+        <img src="https://image.tmdb.org/t/p/w342/nFZF0ljINGUEa0wAW5d22Iqxjii.jpg" alt="The Comeback" class="film-card-poster" />
+        <div class="film-card-body">
+          <div class="film-card-title">The Comeback</div>
+          <div class="film-card-year">HBO / Max</div>
+          <div class="film-card-primer">Season 3</div>
+        </div>
+      </div>
+      <div class="film-card">
+        <img src="https://image.tmdb.org/t/p/w342/gX9zWmUnrjCZEPpultvvFtSUb93.jpg" alt="Bait" class="film-card-poster" />
+        <div class="film-card-body">
+          <div class="film-card-title">Bait</div>
+          <div class="film-card-year">Prime Video</div>
+          <div class="film-card-primer">2026</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background: var(--surface); border: 1px solid var(--border); padding: 2rem; margin-top: 2rem; margin-bottom: 2rem;">
+      <h4 style="font-size: 1.1rem; color: #fff; margin-bottom: 1rem; font-weight: 600;">Why they belong together</h4>
+      <p style="font-size: 1rem; line-height: 1.75; color: rgba(232,232,237,0.8); margin-bottom: 1.25rem; font-weight: 300;">These two shows are the thesis statement of this issue, and they should be read as a diptych. In The Comeback S3, Valerie Cherish — Lisa Kudrow's greatest creation — has signed onto a network sitcom with an AI-written script, executive produced herself, and is documenting the whole thing on camera again. Variety's read is correct: in 2026, everyone is Valerie Cherish. She was always performing relevance; now the machinery of the industry has caught up to her position. Kudrow makes her the sanest adult in a room full of people doing exactly what she has always done, except they can't see it. The show is about the indignity of audition culture absorbed so completely that it becomes personality.</p>
+      <p style="font-size: 1rem; line-height: 1.75; color: rgba(232,232,237,0.8); margin-bottom: 1.25rem; font-weight: 300;">Bait cuts the same argument from the other side of the class-and-race divide. Riz Ahmed plays Shah Latif, a British-Pakistani actor shortlisted to audition for James Bond. The show is a meta-comedy — Shah is auditioning to play a man who is always performing — and Ahmed has written himself a vehicle that lets him show what a brown actor carries into the room that no one in the room will acknowledge. The AV Club's read is the cleanest: Bait isn't about behind-the-scenes industry machinations (unlike The Studio, The Franchise, even The Comeback). It's about what representation costs the person carrying it. Roger Ebert's site calls it "an engaging mix of Uncut Gems and Fleabag." Variety found it "too high-concept" — that dissent is worth flagging, but 18 critics giving it 85 on Metacritic says the majority disagrees.</p>
+      <p style="font-size: 1rem; line-height: 1.75; color: rgba(232,232,237,0.8); font-weight: 300;">Together: Valerie Cherish performs for a camera that has now become an AI. Shah Latif auditions for a franchise that was never designed to contain him. Both shows understand that the most exhausting audition is the one you run for yourself, every day.</p>
+    </div>
+
+    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; margin-top: 4rem; margin-bottom: 2rem; color: #fff;">On the Horizon</h3>
+
+    <div style="background: var(--surface); border: 1px solid var(--border); padding: 2rem; margin-bottom: 2rem;">
+      <h4 style="font-size: 1rem; color: #fff; margin-bottom: 1rem; font-weight: 600;">Waiting for the Out</h4>
+      <p style="font-size: 0.95rem; line-height: 1.7; color: rgba(232,232,237,0.75); margin-bottom: 0; font-weight: 300;">BBC One / iPlayer</p>
+      <p style="font-size: 1rem; line-height: 1.75; color: rgba(232,232,237,0.8); margin-top: 1rem; font-weight: 300;">Dennis Kelly (Utopia) writes a young philosophy teacher who begins teaching in a men's prison and finds that the performance he runs for his incarcerated students — the rational, liberal, educated man — is exposed by them as exactly the construction it is. The show is about who gets to claim an identity, and what happens when the people you are performing for can see through it.</p>
+    </div>
+
+    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; margin-top: 4rem; margin-bottom: 2rem; color: #fff;">Under the Radar</h3>
+
+    <div style="background: var(--surface); border: 1px solid var(--border); padding: 2rem; margin-bottom: 2rem;">
+      <p style="font-size: 1rem; line-height: 1.75; color: rgba(232,232,237,0.8); margin-bottom: 0; font-weight: 300;">Prestige television production internationally is accelerating. Look for debuts and second seasons from studios outside the US major-studio orbit over May and June. The streaming wars are not decided in the US; they're decided at the margins, in the regional prestige programmes that pull audiences across territory. Screen shares beyond the AMPTP orbit.</p>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <section id="continent">
+    <div class="section-eyebrow reveal">
+      <span class="section-eyebrow-icon">&#127758;</span>
+      <span class="section-eyebrow-label">The Continent</span>
+      <span class="section-eyebrow-pipe">|</span>
+      <span class="section-eyebrow-desc">Subtitles required</span>
+    </div>
+    <div class="tv-grid reveal">
+      <div class="pulse-card continent">
+        <div class="pulse-card-img-wrap"><img class="pulse-card-img" src="https://image.tmdb.org/t/p/w780/hlEaYKlqfb0gDXbUHqJEVVBTquB.jpg" alt="The Trap" loading="eager" /></div>
+        <div class="pulse-card-type">France &mdash; France 3 &mdash; 2024 &mdash; 4 Episodes</div>
+        <div class="pulse-card-title">The Trap / Le Piège</div>
+        <div class="continent-lang">French</div>
+        <div class="pulse-card-body">Grégory Montel directs a woman who constructs an elaborate false identity to infiltrate the life of a dangerous man. The show is built on the premise that performance can become so total it becomes real — that the act and the person collapse into one.</div>
+      </div>
+      <div class="pulse-card continent">
+        <div class="pulse-card-img-wrap"><img class="pulse-card-img" src="https://image.tmdb.org/t/p/w780/9k7JqDIbJC2V7fvPy3CqG8Ey5gX.jpg" alt=" Estructuras de Poder" loading="eager" /></div>
+        <div class="pulse-card-type">Spain &mdash; Netflix &mdash; 2024 &mdash; 8 Episodes</div>
+        <div class="pulse-card-title">Power Structures / Estructuras de Poder</div>
+        <div class="continent-lang">Spanish</div>
+        <div class="pulse-card-body">An intimate portrait of four people in positions of institutional power — political, corporate, cultural. The series interrogates what performance is required to occupy those positions and what it costs those who perform it.</div>
+      </div>
+      <div class="pulse-card continent">
+        <div class="pulse-card-img-wrap"><img class="pulse-card-img" src="https://image.tmdb.org/t/p/w780/uNyVaYEPw0Z7wKG7JKxCFQ2bZPK.jpg" alt="Godless" loading="eager" /></div>
+        <div class="pulse-card-type">Poland &mdash; TVN &mdash; 2023 &mdash; 8 Episodes</div>
+        <div class="pulse-card-title">Godless</div>
+        <div class="continent-lang">Polish</div>
+        <div class="pulse-card-body">A priest abandons his faith and ministry. What he discovers is that his entire life was a performance, and outside that role he has no self to return to. The show is Kieslowski-adjacent: faith, identity, the performances we maintain to survive.</div>
+      </div>
+      <div class="pulse-card continent">
+        <div class="pulse-card-img-wrap"><img class="pulse-card-img" src="https://image.tmdb.org/t/p/w780/xJPW2dRNLFbDPqMVVcPm1lPK7MZ.jpg" alt="Reputation" loading="eager" /></div>
+        <div class="pulse-card-type">Germany &mdash; ARD &mdash; 2024 &mdash; 6 Episodes</div>
+        <div class="pulse-card-title">Reputation / Ruf</div>
+        <div class="continent-lang">German</div>
+        <div class="pulse-card-body">A man's reputation — his public performance — becomes his only reality when scandal hits. The show asks the essential question: if you perform yourself so completely that others believe it, does the performance become the truth?</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <section id="behind">
+    <div class="section-eyebrow">
+      <span class="section-eyebrow-label">Behind the Curtain</span>
+    </div>
+
+    <div style="background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--gold); padding: 2.5rem; margin-bottom: 2rem;">
+      <h3 style="font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 1.5rem; line-height: 1.3;">The WGA's AI Provisions Are Being Tested in Practice — and the Gaps Are Showing</h3>
+      <p style="font-size: 1rem; line-height: 1.75; color: rgba(232,232,237,0.8); margin-bottom: 1.25rem; font-weight: 300;">The 2023 WGA strike won language requiring that AI cannot be credited as a writer and cannot be used to undermine minimums — but enforcement relies on writers knowing when AI has been used in their material, which studios are not always transparent about. The SAG-AFTRA deal similarly restricted AI likeness use but left significant grey areas around "digital doubles" and background performer likenesses. In early 2026, several disputes have emerged between writers and production companies over whether AI-assisted development drafts constitute a breach of MBA minimums. The institutional story is not that the unions lost — they won more than many expected — but that the fight moved from the picket line into contract interpretation, which is slower, less visible, and harder to organise around.</p>
+      <p style="font-size: 1rem; line-height: 1.75; color: rgba(232,232,237,0.8); font-weight: 300;">The more precise story is about enforcement infrastructure — the WGA won the rule but hasn't yet built the audit mechanism. That gap is where institutional power reasserts itself quietly.</p>
+    </div>
+
+    <div style="background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--gold); padding: 2.5rem; margin-bottom: 2rem;">
+      <h3 style="font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 1.5rem; line-height: 1.3;">Colour-Conscious Casting in Prestige TV Has Stalled — and the Discourse Has Moved Backwards</h3>
+      <p style="font-size: 1rem; line-height: 1.75; color: rgba(232,232,237,0.8); margin-bottom: 1.25rem; font-weight: 300;">After 2020's visibility peak, data on Black, Latino, and Asian leads in prestige drama has plateaued or declined at several major streamers. DEI programme rollbacks at Disney, Warner Bros. Discovery, and others in late 2024 and early 2025 were framed as budget decisions, but they eliminated the dedicated executives and tracking infrastructure that made inclusion commitments legible and enforceable. Without that infrastructure, casting decisions revert to informal networks — which historically reproduce existing hierarchies. The relevant question for this issue is not diversity-as-representation but diversity-as-labour: who gets to perform which roles, in which rooms, under what conditions.</p>
+      <p style="font-size: 1rem; line-height: 1.75; color: rgba(232,232,237,0.8); font-weight: 300;">The more durable angle is institutional: what accountability infrastructure existed, what replaced it, and what that means for who gets cast in what.</p>
+    </div>
+
+    <div style="background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--gold); padding: 2.5rem;">
+      <h3 style="font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 1.5rem; line-height: 1.3;">The Audition Is Becoming a Screen Test — and the Screen Test May Train the Model</h3>
+      <p style="font-size: 1rem; line-height: 1.75; color: rgba(232,232,237,0.8); margin-bottom: 1.25rem; font-weight: 300;">Several casting platforms have introduced AI-assisted audition tools that record, transcribe, and score self-tape submissions. The terms of service for at least two major platforms (Casting Networks, Actors Access) permit the use of submitted footage for system training — though whether this is happening in practice is not publicly confirmed. The structural question raised is real regardless: actors' unpaid audition performances have always been labour without compensation. If that performance now also generates data used to evaluate future performers, it becomes a resource extracted before any contractual relationship exists — meaning the consent and compensation frameworks the unions built do not yet apply at this stage.</p>
+      <p style="font-size: 1rem; line-height: 1.75; color: rgba(232,232,237,0.8); font-weight: 300;">This is a question being raised by the architecture of these platforms. The terms permit it; whether it happens is unconfirmed. That distinction matters.</p>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <section id="signal">
+    <div class="section-eyebrow">
+      <span class="section-eyebrow-label">The Signal</span>
+      <span class="section-eyebrow-pipe">|</span>
+      <span class="section-eyebrow-desc">Fortnight: April 11–25, 2026</span>
+    </div>
+
+    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.35rem; font-weight: 700; margin-top: 3rem; margin-bottom: 2rem; color: #fff;">Week of April 11, 2026</h3>
+
+    <div class="signal-grid">
+      <div class="signal-card deal">
+        <span class="signal-card-label">THE DEAL</span>
+        <h4 style="font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0.75rem 0; line-height: 1.3;">WGA Reaches Four-Year Deal With Studios; AI Training Payment Left on the Table</h4>
+        <div class="signal-card-body">The Writers Guild of America reached a tentative four-year agreement with the AMPTP on April 4, 2026, after less than a month of negotiations — a notably swift conclusion given the 148-day strike of 2023. The deal includes $321 million in health plan funding, improved streaming residuals, and a requirement that studios notify the WGA if they license writers' work for AI training. However, the studios did not agree to pay writers for that AI training use, which had been a union priority.</div>
+        <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-dim); font-style: italic;">Source: Variety, Los Angeles Times, NPR (April 4–9, 2026)</div>
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.95rem; color: rgba(232,232,237,0.8);">Why this matters: The notification-without-payment provision sets the template for how studios plan to treat writers' intellectual labour as AI feedstock — acknowledged, but not compensated.</div>
+      </div>
+
+      <div class="signal-card resistance">
+        <span class="signal-card-label">THE RESISTANCE</span>
+        <h4 style="font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0.75rem 0; line-height: 1.3;">ACTRA Issues "Do Not Work" Notice Over AI Startup Velvet's Casting Practices</h4>
+        <div class="signal-card-body">On March 19, 2026, the Union of British Columbia Performers (UBCP/ACTRA) issued a Do Not Work notice against Velvet, a US-based AI startup that had used Canadian casting networks to solicit actors for a project it described as an "AI casual conversation" training exercise. The union said Velvet was unable to confirm whether the project would adhere to ACTRA's collective agreement governing AI training use and digital replication of performers.</div>
+        <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-dim); font-style: italic;">Source: The Globe and Mail, UBCP/ACTRA official notice (March 19–20, 2026)</div>
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.95rem; color: rgba(232,232,237,0.8);">Why this matters: This is a direct test of whether AI companies can use the casting pipeline itself — the entry point for performers — as a data-harvesting channel without union oversight.</div>
+        <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(220,38,38,0.1); border-left: 2px solid #f87171; font-size: 0.85rem; color: #f87171; font-style: italic;">Note: Story broke March 19; included as prior-week context for direct relevance to the "Performance" theme.</div>
+      </div>
+
+      <div class="signal-card tool">
+        <span class="signal-card-label">THE TOOL</span>
+        <h4 style="font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0.75rem 0; line-height: 1.3;">Bollywood's Collective Artists Network Deploys AI Production Pipeline With Microsoft</h4>
+        <div class="signal-card-body">Collective Artists Network, one of Bollywood's largest talent agencies, is producing AI-generated video content at its Bengaluru studio using motion-capture data fed into AI character-generation systems. Microsoft confirmed to Reuters that it is providing AI computing infrastructure to Collective to help "shape the next wave of global storytelling." The partnership represents a talent agency — not a traditional studio — taking direct control of AI-generated content production.</div>
+        <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-dim); font-style: italic;">Source: Reuters (April 4, 2026)</div>
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.95rem; color: rgba(232,232,237,0.8);">Why this matters: When talent agencies become AI content producers, the line between representing performers and replacing them with synthetic versions of them collapses.</div>
+      </div>
+    </div>
+
+    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.35rem; font-weight: 700; margin-top: 3rem; margin-bottom: 2rem; color: #fff;">Week of April 18, 2026</h3>
+
+    <div class="signal-grid">
+      <div class="signal-card deal">
+        <span class="signal-card-label">THE DEAL</span>
+        <h4 style="font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0.75rem 0; line-height: 1.3;">Paramount Skydance Secures ~$24 Billion From Gulf Sovereign Wealth Funds for Warner Bros. Discovery Takeover</h4>
+        <div class="signal-card-body">Paramount Skydance locked in equity commitments of nearly $24 billion from three Middle Eastern sovereign wealth funds — led by Saudi Arabia, with participation from Qatar and Abu Dhabi — to back its pending acquisition of Warner Bros. Discovery. A WBD shareholder vote on the merger is scheduled for April 23. Paramount has simultaneously restructured its debt financing and expanded a revolving credit facility to $5 billion to prepare for the close.</div>
+        <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-dim); font-style: italic;">Source: Variety, Reuters (April 5–10, 2026)</div>
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.95rem; color: rgba(232,232,237,0.8);">Why this matters: If approved April 23, this deal concentrates ownership of Warner, HBO, DC, CNN, and Max under a single entity partly capitalised by Gulf state funds — reorienting who ultimately decides what stories get told at scale.</div>
+      </div>
+
+      <div class="signal-card resistance">
+        <span class="signal-card-label">THE RESISTANCE</span>
+        <h4 style="font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0.75rem 0; line-height: 1.3;">SAG-AFTRA Returns to the Table April 27 With AI Likeness Rights as the Central Fight</h4>
+        <div class="signal-card-body">SAG-AFTRA and the AMPTP will resume formal contract negotiations on April 27, 2026, under a mutual media blackout, after pausing to allow the WGA's faster-than-expected deal to conclude. National Executive Director Duncan Crabtree-Ireland is leading for the union; AMPTP President Greg Hessinger for the studios. The unresolved core issues are AI guardrails — specifically digital replication and likeness rights for performers — and streaming residuals.</div>
+        <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-dim); font-style: italic;">Source: Variety, Deadline, Screen Daily (April 6–7, 2026)</div>
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.95rem; color: rgba(232,232,237,0.8);">Why this matters: Unlike the WGA fight over written work, SAG-AFTRA's central demand is about ownership of a performer's physical self — what studios can scan, clone, and deploy without the actor present.</div>
+      </div>
+
+      <div class="signal-card tool">
+        <span class="signal-card-label">THE TOOL</span>
+        <h4 style="font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0.75rem 0; line-height: 1.3;">Hollywood Assistants Are Routinely Using AI for Script Coverage and Development, Despite WGA Prohibitions</h4>
+        <div class="signal-card-body">A Hollywood Reporter investigation published April 8, 2026, found that studio and production company assistants — below the WGA threshold — are regularly using generative AI for first-pass script coverage, notes, and development tasks, often at their employers' tacit encouragement. One assistant quoted: "When they say, 'You should be using AI,' the first thought in your head is: 'Are you asking me to teach you how to replace me with technology?'" The practice routes creative work through AI systems ungoverned by the new WGA protections, which apply only to credited writers.</div>
+        <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-dim); font-style: italic;">Source: The Hollywood Reporter (April 8, 2026)</div>
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.95rem; color: rgba(232,232,237,0.8);">Why this matters: The assistant class — historically the development pipeline's memory and judgment — is being conscripted into AI normalisation at the precise moment their seniors negotiated protections that don't extend downward.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <section id="pulse">
+    <div class="section-eyebrow">
+      <span class="section-eyebrow-label">Weekly Pulse</span>
+    </div>
+
+    <div class="pulse-grid">
+      <div class="pulse-card">
+        <div class="pulse-card-type">Most Talked About</div>
+        <h3 class="pulse-card-title">BBC Culture Best of 2026 List</h3>
+        <div class="pulse-card-desc">The list landing in April gave critics and audiences a shared frame of reference mid-year. Industry S4 and The Night Manager S2 appear to be the most discussed entries — both are shows built around characters performing versions of themselves for professional or social survival. The conversation around the list is less about individual titles and more about what the list says about the current critical appetite: prestige character drama, British production, moral ambiguity without resolution.</div>
+        <div class="pulse-card-source">April 2026 drop</div>
+      </div>
+
+      <div class="pulse-card">
+        <div class="pulse-card-type">Our Call — Most Likely to Split the Room</div>
+        <h3 class="pulse-card-title">The Beauty</h3>
+        <div class="pulse-card-desc">The Beauty is asking something audiences may not be ready to give. Ryan Murphy's body-horror satire — a drug that literally remakes you, with the side effect that you might eventually explode — sits precisely at the intersection of vanity, survival, and the performance of identity that runs through this issue. Work this formally committed to its premise divides; that's not a flaw, it's the mechanism. The BBC Culture 2026 list's placement of it alongside prestige drama is itself an editorial statement about what counts as serious television right now.</div>
+        <div class="pulse-card-source">FX/Hulu</div>
+      </div>
+
+      <div class="pulse-card">
+        <div class="pulse-card-type">Our Recommendation — If It Passed You By</div>
+        <h3 class="pulse-card-title">Bait</h3>
+        <div class="pulse-card-desc">Six sub-half-hour episodes, genuinely unclassifiable — industry satire, family comedy, psycho-drama, Bond pastiche — from a filmmaker and performer both operating at the edge of their range. The question at its centre (who does the industry decide gets to play the role, and what does the audition cost the person asking?) is the question this issue is built around. Start here if you haven't.</div>
+        <div class="pulse-card-source">Prime Video, 2026 | Metacritic 85 (Universal Acclaim, 18 critics)</div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 4rem; padding: 2rem; color: var(--text-muted); font-size: 0.95rem;">
+      <p>Screen Share is published fortnightly. Issue 005 publishes May 9, 2026.</p>
+    </div>
+  </section>
+
+  <footer style="padding: 3rem 2.5rem; max-width: 1200px; margin: 0 auto; border-top: 1px solid var(--border); text-align: center;">
+    <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 1rem;">
+      <a href="https://screenshare.watch" style="color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--gold);">Screen Share</a> is an independent newsletter exploring the week in film and television.
+    </p>
+    <p style="color: var(--text-dim); font-size: 0.8rem;">
+      <a href="https://screenshare.watch/archive" style="color: var(--text-muted); text-decoration: none;">Archive</a> | <a href="https://screenshare.watch/subscribe" style="color: var(--text-muted); text-decoration: none;">Subscribe</a>
+    </p>
+  </footer>
+
+  <script>
+    const revealElements = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+    revealElements.forEach(el => observer.observe(el));
+
+    // Editor's note unravel animation
+    document.querySelectorAll('.editors-note-text').forEach(p => {
+      const html = p.innerHTML;
+      const tokens = html.split(/(\s+)/);
+      p.innerHTML = tokens.map((t, i) => t.trim() ? '<span class="unravel-word" style="transition-delay:' + (i * 18) + 'ms">' + t + '</span>' : t).join('');
+    });
+
+    const noteObs = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.querySelectorAll('.unravel-word').forEach(w => w.classList.add('visible'));
+          const sig = entry.target.querySelector('.editors-note-sig');
+          if (sig) setTimeout(() => sig.classList.add('unraveled'), 800);
+          noteObs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.editors-note').forEach(el => noteObs.observe(el));
+
+    // Mood data with 3 films per mood
+    const moodData = {
+      'character-study': {
+        label: 'Character Study',
+        films: [
+          {title: 'Mulholland Drive', year: 2001, director: 'David Lynch', poster: 'https://image.tmdb.org/t/p/w342/mR8EX3Q1ry0MqQ5f2LDLwBXLRvE.jpg', tag: 'Dream and performance collapse', primer: 'Lynch\'s masterpiece about an actress who may or may not be who she thinks she is.'},
+          {title: 'The General', year: 1926, director: 'Buster Keaton', poster: 'https://image.tmdb.org/t/p/w342/qf1kpHjlJM2i56cF8wMdYWXbVQj.jpg', tag: 'Face as blank canvas', primer: 'Keaton\'s face never changes. The performance is entirely bodily, entirely external.'},
+          {title: 'Tár', year: 2022, director: 'Todd Field', poster: 'https://image.tmdb.org/t/p/w342/9PYfNLSBwVzKZhMfPaGM8sP5HKn.jpg', tag: 'Total performance', primer: 'When the performance is so total that reality bends to accommodate it.'}
+        ]
+      },
+      'double-life': {
+        label: 'Double Life',
+        films: [
+          {title: 'Carol', year: 2015, director: 'Todd Haynes', poster: 'https://image.tmdb.org/t/p/w342/3VFt6lRfCE8Pf7TnZ9L2kRJ1kqR.jpg', tag: 'Passing as ordinary', primer: 'Two women navigating the performance of heterosexuality in 1950s America.'},
+          {title: 'Phantom Thread', year: 2017, director: 'Paul Thomas Anderson', poster: 'https://image.tmdb.org/t/p/w342/pWmb0V4WBNsYXJW3hqQOE1Lk6Ua.jpg', tag: 'Reciprocal performance', primer: 'Two people performing devotion. But which is the performance and which is the person?'},
+          {title: 'The Talented Mr. Ripley', year: 1999, director: 'Anthony Minghella', poster: 'https://image.tmdb.org/t/p/w342/xHF3duV3lqpExAZX7sVaElUj5jn.jpg', tag: 'Identity as construct', primer: 'A man performing the life he wants until the performance becomes indistinguishable from reality.'}
+        ]
+      },
+      'identity-theft': {
+        label: 'Identity Theft',
+        films: [
+          {title: 'The Passenger', year: 1975, director: 'Michelangelo Antonioni', poster: 'https://image.tmdb.org/t/p/w342/xCXmZp_XRqLKNqyg5kW6pXnYfLz.jpg', tag: 'Erasure through exchange', primer: 'A man assumes another\'s identity and discovers identity itself is a performance you can never escape.'},
+          {title: 'Ripley', year: 2024, director: 'Steven Zaillian', poster: 'https://image.tmdb.org/t/p/w342/f2sLP1SKXdfy9tICjCpm6bVMDX2.jpg', tag: 'Conviction as truth', primer: 'When you perform a version of yourself long enough, the performance becomes all that others know.'},
+          {title: 'Goodfellas', year: 1990, director: 'Martin Scorsese', poster: 'https://image.tmdb.org/t/p/w342/aKuFiU82VjcyVeIynt52Zjlevfl.jpg', tag: 'Performance as survival', primer: 'In a world where performance is currency, the best performance is the one that gets you killed last.'}
+        ]
+      },
+      'stage-fright': {
+        label: 'Stage Fright',
+        films: [
+          {title: 'Singin\' in the Rain', year: 1952, director: 'Gene Kelly', poster: 'https://image.tmdb.org/t/p/w342/3xNDhJESNHT9w8vVvb6LgA0Y9Ml.jpg', tag: 'Obsolescence', primer: 'When the performance you\'ve perfected becomes obsolete overnight, who are you underneath?'},
+          {title: 'The Comeback', year: 2024, director: 'Michael Lehmann', poster: 'https://image.tmdb.org/t/p/w342/3QceXveKrpT6pJUNuwC7EtCMX8A.jpg', tag: 'Performance as identity', primer: 'Valerie Cherish still performing relevance after decades. The role has replaced the person entirely.'},
+          {title: 'Bait', year: 2024, director: 'Riz Ahmed', poster: 'https://image.tmdb.org/t/p/w342/dIjXXNfN3pNvMxCJ1JyIZYfCdWO.jpg', tag: 'Audition as exposure', primer: 'An actor auditioning to play an actor auditioning. What gets exposed in the audition room?'}
+        ]
+      },
+      'method-acting': {
+        label: 'Method Acting',
+        films: [
+          {title: 'Raging Bull', year: 1980, director: 'Martin Scorsese', poster: 'https://image.tmdb.org/t/p/w342/dMuwWZBKGa9LbKYMR7VzpMPiMJC.jpg', tag: 'Transformation as method', primer: 'De Niro\'s physical transformation becomes the entire project. The body is the performance.'},
+          {title: 'The Lighthouse', year: 2019, director: 'Robert Eggers', poster: 'https://image.tmdb.org/t/p/w342/zfaKmgLWZABZqJGevOVwXmHzJVQ.jpg', tag: 'Performative descent', primer: 'Two men performing sanity for each other as madness settles in. Neither can stop performing.'},
+          {title: 'There Will Be Blood', year: 2007, director: 'Paul Thomas Anderson', poster: 'https://image.tmdb.org/t/p/w342/jIUL4qAC0qPrJWYVA1DKrQh0Jf5.jpg', tag: 'Performance as scripture', primer: 'A man who has learned to perform certainty in the face of total corruption. Religion and performance are identical.'}
+        ]
+      },
+      'fame-costs': {
+        label: 'What Fame Costs',
+        films: [
+          {title: 'A Star Is Born', year: 2018, director: 'Bradley Cooper', poster: 'https://image.tmdb.org/t/p/w342/dXNAPwY001t0nYkK7t0yXcP1IUV.jpg', tag: 'Visibility as consumption', primer: 'When your performance becomes your only commodity, what happens when you can\'t perform anymore?'},
+          {title: 'Sunset Boulevard', year: 1950, director: 'Billy Wilder', poster: 'https://image.tmdb.org/t/p/w342/lRULvqmv1i0rBZvOxvMp6N3VaEj.jpg', tag: 'Clinging to the past', primer: 'A silent film star unable to perform in the sound era. The industry has moved on, but she hasn\'t.'},
+          {title: 'The Hours', year: 2002, director: 'Stephen Daldry', poster: 'https://image.tmdb.org/t/p/w342/4S3gPxRAr5GBPe5tVUHCjLx5EYO.jpg', tag: 'Refusing the role', primer: 'Three women at different points in their lives, each refusing the role history assigned them.'}
+        ]
+      },
+      'transformation': {
+        label: 'Transformation',
+        films: [
+          {title: 'The Fly', year: 1986, director: 'David Cronenberg', poster: 'https://image.tmdb.org/t/p/w342/2oBEDYPMzGLuexIXcKr7H2h6jCe.jpg', tag: 'Body as performance prison', primer: 'A scientist\'s body transforms while his mind remains, creating a performance he can\'t sustain.'},
+          {title: 'Breakfast at Tiffany\'s', year: 1961, director: 'Blake Edwards', poster: 'https://image.tmdb.org/t/p/w342/zqZEjEzfcSxp0hzSGxq3B2BYGgc.jpg', tag: 'Reinvention as escape', primer: 'Holly Golightly is a performance so complete that you can never quite touch the person underneath.'},
+          {title: 'Priscilla', year: 2023, director: 'Sofia Coppola', poster: 'https://image.tmdb.org/t/p/w342/hB2dWZnIHn8g1ymV47h7O5TuYnf.jpg', tag: 'Performance of love', primer: 'A woman shaped entirely by the performance of being with Elvis. What remains when that performance ends?'}
+        ]
+      }
+    };
+
+    // Render mood films and voting
+    function renderMoodFilms(mood) {
+      document.querySelectorAll('.mood-chip').forEach(c => c.classList.toggle('active', c.dataset.mood === mood));
+      const data = moodData[mood];
+      if (!data) return;
+
+      const container = document.getElementById('moodFilms');
+      container.innerHTML = data.films.map(f => {
+        const posterUrl = f.poster;
+        const title = f.title;
+        const year = f.year;
+        const director = f.director;
+        const tag = f.tag;
+        const primer = f.primer;
+        return '<div class="film-card"><img class="film-card-poster" src="' + posterUrl + '" alt="' + title + '" loading="lazy" /><div class="film-card-body"><div class="film-card-title">' + title + '</div><div class="film-card-year">' + year + ' &middot; ' + director + '</div><div class="film-card-mood-tag">' + tag + '</div><div class="film-card-primer">' + primer + '</div></div></div>';
+      }).join('');
+
+      renderMoodVote(mood);
+    }
+
+    function renderMoodVote(mood) {
+      const data = moodData[mood];
+      if (!data) return;
+      const key = 'ss-004-discover-' + mood, saved = localStorage.getItem(key);
+      const btnsEl = document.getElementById('moodVoteBtns'), resultsEl = document.getElementById('moodVoteResults');
+
+      btnsEl.innerHTML = data.films.map((f, i) =>
+        '<button class="mood-vote-btn' + (saved == i ? ' selected' : '') + '" onclick="castMoodVote(\'' + mood + '\',' + i + ')"' + (saved !== null ? ' disabled' : '') + '><span>' + f.title + '</span><span class="mood-vote-btn-year">' + f.year + '</span></button>'
+      ).join('');
+
+      if (saved !== null) {
+        const idx = parseInt(saved);
+        resultsEl.innerHTML = '<div style="text-align:center;font-size:0.85rem;color:var(--text-muted);margin-top:1rem;">Your pick: <span style="color:var(--text);font-weight:600;">' + data.films[idx].title + '</span></div>';
+        resultsEl.classList.add('visible');
+      } else {
+        resultsEl.innerHTML = '';
+        resultsEl.classList.remove('visible');
+      }
+    }
+
+    window.castMoodVote = function(mood, idx) {
+      const key = 'ss-004-discover-' + mood;
+      if (localStorage.getItem(key) !== null) return;
+      localStorage.setItem(key, idx);
+      renderMoodVote(mood);
+    };
+
+    document.querySelectorAll('.mood-chip').forEach(chip => {
+      chip.addEventListener('click', function(e) {
+        e.preventDefault();
+        renderMoodFilms(this.dataset.mood);
+      });
+    });
+
+    // Initialize with first mood
+    renderMoodFilms('character-study');
+  </script>
+</body>
+</html>
